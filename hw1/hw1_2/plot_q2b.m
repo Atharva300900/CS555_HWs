@@ -14,7 +14,7 @@ for idx = 1:length(Nvals)
   clear N; N = Nvals(idx);
   e2=1; t0=tic; heat2d_perm; t_perm(idx)=toc(t0);
   clear N; N = Nvals(idx);
-  e2=1; t0=tic; heat2d_adi;  t_adi(idx)=toc(t0);
+  e2=1; t0=tic; [e2, t_fac_out] = heat2d_adi_2(N, dt, 1.2);  t_adi(idx)=toc(t0);
 end
 
 figure(1);

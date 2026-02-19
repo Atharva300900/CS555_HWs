@@ -57,21 +57,27 @@ lamxy = -nu*(lamx+lamy);              % Judge accuracy by discrete lambdas
 u = reshape(U,m*m,1);
 
 % Permuted Cholesky factorization
-p = symamd(HL);
-L = chol(HL(p,p),'lower');
-HRp = HR(p,p);                  % permuted HR
+p    = symamd(HL);
+L    = chol(HL(p,p),'lower');
+%HRp  = HR(p,p);                  % pre-permute HR once outside the loop
 
-u = u(p);                        % permute u once at start
+%u = u(p);                        % permute u once before the loop
+
+
 for istep=1:nstep; time=istep*dt;
-  u = L'\( L \ (HRp*u) );       % solve entirely in permuted space
-end;
-u(p) = u;                        % unpermute u once at end
+  rhs = HR*u;
+  rhs_p = rhs(p);
+  u_p = L'\( L \ (rhs_p) );       % everything stays in permuted space
+  u = zeros(size(u));
+  u(p) = u_p;
+end
+                       % unpermute u once after the loop
 U = reshape(u,m,m);
 
 Uex = exp(lamxy*time)*U0;
 Err = Uex-U;
-eo  = e2;
 e2  = norm(Err,"fro") / norm(Uex,"fro");
+eo  = e2;
 ratio = eo/e2;
 
 format shorte;
