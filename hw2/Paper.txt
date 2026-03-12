@@ -1,0 +1,1938 @@
+Computers & Fluids Vol. 14, No. I, pp. 23.-41, 1986
+Printed in Great Britain.
+
+0045-7930/86 $3.00 + .00
+© 1986 Persamon Prem Ltd.
+
+SPECTRAL AND FINITE DIFFERENCE SOLUTIONS OF
+THE BURGERS EQUATION
+C. BASDEVANT
+Laboratoire de M6t6orologie Dynamique, Ecole Normale Sup~rieure, 75231 Pads,
+Cedex 05, France
+M. DEVILLE
+Unit~ de M6canique Appliqu6e, Universit6 Catholique de Louvain, Louvain-la-Neuve,Belgium
+P. HALDENWANG
+l~partement d'H(fliophysique, Universit6 de Provence, Centre de St. J&6me, 13397 Marseille,
+Cedex 13, France
+J. M. LACROIX, J. OUAZZANI, R. PEYRET
+D~partement de Math6matiques, Universit6 de Nice, Parc Valrose, 06000 Nice, France
+P. ORLANDI
+Dipartimento di Meccanica e Aeronautica, Universita di Roma, Via Eudossiana 18,
+00184 Roma, Italy
+and
+A. T. PATERA
+Department of Mechanical Engineering, Massachusetts Institute of Technology,
+Cambridge, MA 02139, U.S.A.
+(Received 8 October 1984)
+
+Abstract--Spectral methods (Fourier Galerkin, Fourier pseudospectral, ChebyshevTau, Chebyshev
+collocation, spectral element) and standard finite differences are applied to solve the Burgers
+equation with small viscofity (~ = 1/100=). This equation admits a (nonsingular) thin internal
+layer that must be resolved if accurate numerical solutions are to be obtained. From the reported
+computations, it appears that spectral schemes offer the best accuracy, especially if coordinate
+transformation or elemental subdivision is used to resolve the regions of large variation of the
+dependent variable.
+1. INTRODUCTION
+It is well known (Oottlieb and Orszag [ 1]) that spectral methods applied to problems with
+smooth solutions offer a spectacular rate of convergence. However, the question remains:
+If the solution presents sharp variations over a very thin layer, and almost behaves like a
+discontinuity, do spectral schemes compete with other classical methods such as finite
+differences? This question was raised during a G A M M workshop held in Louvain-laNeuve at the end of 1980, and several investigators proposed to solve the nonlinear
+Burgers equations with a very small viscosity as a test problem. It should be noted that
+our interest here is in problems admitting solutions with rapid variation, but not
+discontinuities; the former can obtain exponential convergence with sufficient resolution,
+the latter require special treatment if spectral accuracy is to be obtained.
+In this paper, all the numerical results produced by the participants in this study are
+reported, discussed and compared. Section 2 describes the equations and the dynamics
+with a viscosity g equal to 1/100~r. One gives briefly the analytical solution, which is
+quite difficult to compute. In fact, it is easier to implement a transient algorithm to
+perform the numerical integration of the Burgers equation than to estimate the exact
+values. Section 3 presents the numerical methods used by the co-authors. C. Basdevant
+presents the solution by the Fourier method; M. Deville and P. Haldenwang present a
+C h e b y s h e v - T a u method, the former using Rosenbrock, the latter Adams--Bashforth
+Crank-Nicolson (ABCN); J. M. Lacroix, J. Ouazzani and R. Peyret apply an ABCN
+collocation method; A. T. Patera uses an ABCN scheme with a spectral element spatial
+23
+
+C. BASDEVANTet al.
+
+24
+
+discretization; P. Orlandi computes a finite difference (FD) solution using a second-order
+approximation and a stretching transformation.
+It appears that for the same number of degrees of freedom, spectral methods do yield
+better accuracy than FD solutions, especially from the point of view of phase errors.
+However, if the problem involves, as in this case, sharp variations of the velocity profile,
+spectral methods do not possess an exponential rate of convergence until the region of
+rapid change is adequately resolved. The exponentially fast convergence is lost because
+derivatives are evaluated through the region of large variation. We show here that this
+relatively dismal performance can be improved using a coordinate transformation or
+element technique which accumulates points in the region of large gradient.
+2. THE BURGERS EQUATION--ANALYTICAL SOLUTION
+The test problem consists in the Burgers equation
+
+Ou
+
+Ou
+
+Ou2
+
+--Ot + u ~x -~ u O x : '
+
+[xl ~ 1,
+
+t > 0,
+
+(2.1)
+
+with boundary conditions
+u(+_l, t) = 0,
+
+(2.2)
+
+(or equivalently 2-periodicity) and initial condition
+
+u(x, 0) = - s i n 7rx.
+
+(2.3)
+
+For this problem, the viscosity is taken to be v = 10-2/7r. For such a small viscosity, the
+solution develops into a sawtooth wave at the origin from about the time t = l/Tr. The
+gradient at the origin reaches its maximum value at about t = 0.5. This value represents
+the travel time of the initial peaks of the velocity profile at Xmax = +0.5 freestreaming
+with u = -T-I toward the origin.
+The theoretical solution of problem (2.1-2.3) was obtained by Cole [2] and compiled
+by Benton and Platzmann [3]:
+oo
+
+u(x, t) = 41rv[ ~ na,e-"'"t~sin mrx/(ao + 2 ~ a,e-"2"'/"cos mrx)],
+
+(2.4)
+
+n=l
+
+n=l
+
+where a, = (-l)"I,(l/21rp) and I,(z) denotes the modified Bessel functions of first kind.
+This analytical solution is numerically untractable at small t (0 ~ t ~< 2/7r) and v as I,(z)
+with z going to infinity behaves asymptotically as eZ(2rz) -t/z independent of n. A better
+form comes from the convolution product in Cole's transformation, i.e.
+
+u(x,t)=I-f+~sinTr(x-n)f(x-~)exp(-n2/4ut)dn/
+
+]
+
+f (x - ~)ex~-~2/4vt) d~ ,
+oo
+
+(2.5)
+
+with f ( y ) = e x p ( - c o s ~ry/27rv). Using Hermite integration, a seven-digit accurate result
+was produced up to t = 3/~" in order to compute the value of the slope at the origin. The
+latter is a sensitive quantity and hence a good measure of the accuracy of the numerical
+methods.
+3. THE NUMERICAL METHODS
+In this section, we shall describe the various approaches taken for solving the problem
+(2.1-2.3). They belong to several categories: Fourier spectral schemes, Chebyshev spectral
+schemes, and finite differences.
+
+Burgers equation
+
+25
+
+3.1 Fourier spectral m e t h o d
+With the variables (x, t) changed in x ' = 7rx, t' = r t , and dropping the primes, eqns
+(2.1) and (2.3) b e c o m e in conservative form
+Ou
+Ot
+
+10u 2
+
++
+
+2 Ox
+
+= v'
+
+02u
+
+-~r ~< x ~ 7r,
+
+Ox 2'
+
+t > 0
+
+u(x, 0) = - s i n x,
+
+(3.1)
+(3.2)
+
+where z,' -- ~rv = 10 -2. As u is n o w 2~r-periodic in x, one can a p p r o x i m a t e the solution
+o f (3.1) by a truncated Fourier series
+N
+
+u,(x, t) = ~
+
+Uk(t)e i~.
+
+(3.3)
+
+k=-N
+
+Following Gottlieb and Orszag [ l ], the spectral equations are
+dUk
+dt
+
+i
+
+ik
+:~ Nk(U, u) - v'k2uk,
+
+- N ~< k ~< N,
+
+(3.4)
+
+with the initial conditions
+ug(0) = 0
+
+for
+
+k 4: 1,
+
+urn(0) = i/2,
+
+u_l(O) = - i / 2 .
+
+(3.5)
+
+In (3.4), u = [Uk] and Nk(U, U) denotes the nonlinear t e r m which is provided by a
+convolution product. T h e standard Galerkin a n d pseudo-spectral m e t h o d s differ in
+practice in the nonlinear term evaluation.
+Let us assume M > / N a n d define
+~k =
+
+Ikl ~< N,
+
+Uk,
+
+~k=0,
+
+N < Ik[ <~ M.
+
+(3.6)
+
+T h e algorithm proceeds as follows:
+(i) Perform an inverse Discrete Fourier Transform (DFT) using Fast Fourier
+algorithms (FFT) of length M on Uk tO obtain u(xi), xj = 27rj/2M, 0 <~j <~ 2M - I.
+(ii) Compute w(xj) = u(xj) 2, 0 ~<j < 2M - 1.
+(iii) Perform the direct DFT of length M on the w(xj) values to produce u*u(k)
+= wg,-M<~k<~M.
+Depending on the respective values o f M and N, the scheme will r e m o v e or leave the
+aliasing errors.
+If M > ~N, the scheme is the Galerkin m e t h o d and
+N
+
+Nk(U, U) =
+
+~
+
+UuUk-p,
+
+(3.7)
+
+p=-N
+
+while for 2~N >/ M >/ N, aliasing errors pollute the solution and the scheme is a pseudospectral approximation.
+
+Nk(u, u) = Z upuq,
+
+IPl, Iql ~< N
+k = p + q + 2Me,
+
+(3.8)
+
+C. BASDEVANT el al.
+
+26
+
+where e may be 0 or _+1. Aliasing terms come from the inability for the 2M grid points
+xj in the physical space to separate a wave from its higher-order harmonics.
+The time marching technique applied to (3.4) uses the leapfrog scheme for the
+nonlinear term and an "exact" integration for the linear part. Rewriting (3.4) for a single
+Fourier mode as
+dUk .A/'k(U,U) "[- ~Uk,
+d--~--=
+
+d~ k =
+
+ik
+--~Nk,
+
+), = - u ' k 2,
+
+(3.9)
+
+Eq. (3.9) may be time integrated
+
+f
+
+Uk(t + At) = Uk(t -- At)e2xat +
+
+t+ At
+
+.A;k(U, U)('r)ex(t+At-') dr.
+
+dt-~t
+
+Using the trapezoidal rule, the previous relationship leads to the explicit scheme
+Uk(t + At) = Uk(t -- At)e2xat + 2AteXatNk(U, u)(t),
+
+(3.10)
+
+which is second-order accurate in time and unconditionally stable for the viscous terms.
+3.2 Chebyshev spectral methods
+Let UN denote the Chebyshev approximation of the dependent variable u. Therefore,
+N
+
+(3.11)
+
+uMx, t) = ~ an(t)T,(x),
+n=O
+
+where Tn(x) is the nth order Chebyshev polynomial defined by Tn(x) = cos(n cos -t x).
+3.2.1. Methods in spectral space (TAU). Using the Tau projection method for the
+linear part of (2.1) and the pseudo-spectral scheme for the nonlinear term, the semidiscrete spectral equations are [1]
+dan
+cn --~ = dVn(a, a) + .£n(a),
+Co = 2,
+
+cn = 1,
+
+0 ~< n ~< N - 2
+for
+
+n > 0,
+
+(3.12)
+
+where dVn and / n represent the nonlinear and linear terms, respectively. Denoting by a
+= [an] the set of Chebyshev coefficients, the operators on the fight-hand side of (3.12)
+may be defined as
+N
+
+-£n(a) = v
+
+~
+
+m ( m 2 - n2)am,
+
+m=n+2
+
+m+n even
+
+dVn(a, a) = - 2
+
+N
+
+N
+
+E
+
+Z ClmlClplPalplalml
+
+m=-N p=-N
+m+p~n+ I
+rn+p+n odd
+N
+
+-2
+
+N
+
+~
+ClmlClplPalulalml.
+mffi-N p = - N
+m+p~2N~n+ 1
+m+p+n odd
+
+The system (3.12) is closed by the boundary conditions
+N
+
+N
+
+( - l ) " a . = O;
+n=O
+
+Z a . = O.
+n=O
+
+(3.13)
+
+Burgers equation
+
+27
+
+The nonlinear terms is expensive to evaluate directly from (3.13) and is obtained in
+practice by pseudo-spectral calculation. From the coefficients a,, it is possible to compute
+the Chebyshev coefficients of the first-order derivative by standard recurrence relationships
+and the nonlinear term is evaluated in physical space. From this evaluation, we get N,(a,
+a). To go from Chebyshev to physical space, and vice versa, can be performed easily by
+discrete Chebyshev transforms or by matrix multiplications on a vector machine. Two
+time schemes are considered to approximate (3.12).
+The first method, denoted ABCN, uses the Adams-Bashforth scheme for the convective
+part, and the Crank-Nicolson scheme for the viscous term.
+
+c.
+
+1
+1
+a.(t + At) - a.(t)
+3 At if)
+~ At.(t - At) + ~ [.£.(t) + / ' . ( t + At)],
+At
+= 2
+-
+
+(3.14)
+
+where JV.(t) is a short notation for ,N.[a(t), a(t)]. It is shown in Deville et al. [4] that this
+scheme of second-order accuracy in time is sufficient to achieve a moderate accuracy
+level at a reasonable computational cost. Note that (3.14) implies the solution of a linear
+algebraic system with constant coefficients at each time step.
+The second method is a semi-implicit Runge-Kutta scheme o f Rosenbrock type. It is
+due to Michelsen and Villadsen [5] and is third-order accurate in time. If we set
+A(. ) = l -- cAt[dV(a, • ) + N ( . , a) + .£(. )],
+where a is evaluated at time t, the Rosenbrock algorithm is
+A(kl) = AtSt(a),
+A(k2) = AtSt(a + b2kl),
+A(k3) = At~t(b31kl + b32k2)
+
+(3.15)
+
+a(t + At) = a(t) + Rikl + R2k2 + k3,
+
+where ~ ( . ) = JV(., .) + - f ( . ) , and c = 0.43586652, b2 = 0.75, b3l = - 8 (c2 - 2c + 1)/
+6c, ba2 = 2 (6c 2 - 6c + 1)/9c, Ri = 11/27 - b31, R2 = 16/27 - b32.
+The algorithm is strongly stable and is designed to integrate stiff equations. The
+method is rather expensive as it requires factorization of a linear system at each time
+cycle. Furthermore, the construction of the associated matrix implies O(N 3) operations.
+3.2.2. M e t h o d s in physical space (Collocation). This kind of procedure was proposed,
+for example, by Lanczos [6] and Finlayson [7]. Here, Chebyshev polynomials are used in
+a collocation pseudo-spectral approximation with the ABCN scheme (Ouazzani and
+Peyret [8]).
+The second-order derivative at each interior collocation point x; = cos r i / N ; i = 1,
+. . . . N - 1; is expressed in terms of the values Uk at all points k = 0 . . . . . N by the
+formula
+02U,v .
+N
+txi, t) = ~ LikUu(Xk, t),
+
+(3.16)
+
+k=O
+
+where L~k is given by
+( - 1 )i+k + 1
+Li.k = 6k( l -- X~)(Xi -- Xk) 2 (2 -- XiXk -- X~),
+
+l~i<~N-I
+O<~k<~N
+
+(~o = Yu = 2 , ~ . = 1 for 1 < i < N Li,i =
+
+3(1 - x~)
+
++
+
+1)
+- 1
+
+i÷k
+1 <~i~N-
+
+1.
+
+C. BASDEVANTel al.
+
+28
+
+Therefore, the resulting algebraic system may be written as
+
+us(x~, t + At)
+
+2 ~"
+
+i't+At)=us(xi't)-At
+
+~ uu o x l
+
+1 [ Oust.
+- -~ ~Ulv-~x ](xi, t - At)
+u s ( - I , t + At) = 0
+
+u 02UN (Xi, t)] , I ~ i ~ < N - I
+
+~ Ox 2
+
+us(l, t + At) = 0.
+
+The nonlinear term is computed through the pseudospectral technique.
+As already noted, a region of large gradient develops near the origin. The thickness of
+this layer is approximately 0.042 and the number of collocation points in this region,
+-0.021 ~< x ~< 0.021, is not sufficient if the cutoff value N is too small. This number is 7
+for N = 512, 3 for N = 256 and only l i f N ~< 128. Table l presents the abscissa xN/2-1
+of the first collocation point adjacent to the origin. In order to obtain more collocation
+points in this region, we use a coordinate transformation
+x = g(~),
+
+(3.17)
+
+where g(~') is an odd function satisfying g ( _ l ) = +1. The chosen function g is
+x = g(~) = (1 - a)~ 3 + a L
+
+a > 0.
+
+(3.18)
+
+For a(=g'(0)) small, the collocation points in physical (x) coordinate are clustered near
+the origin. The transformed eqn (2. l) yields
+
+0u+u0u_
+-~
+
+g, -~
+
+t0u2 e"0u)
+g, 2 ~ - ~
+
+Igl ~ 1,
+
+g' 0 ~] '
+
+t > o,
+
+(3.19)
+
+and is solved by the foregoing ABCN collocation scheme. The coefficients of the expansion
+of the first-order derivatives appearing in (3.19) may be found in Ouazzani and
+Peyret [8].
+3.2.3. Spectral element methods. The spectral element decomposition [9, 10] breaks
+the computational domain up into a series of macro-elements of length L k, k = 1. . . . .
+M, and expands the unknown in each element as a Lagrangian interpolant through the
+Gauss-Lobatto Chebyshev collocation points,
+N
+
+Uk = ~, ukihi(r),
+
+(3.20a)
+
+i=o
+2 N
+
+hi(r) = N n~=o=cicn--1 Tn(ri)Tn(r),
+
+(3.20b)
+
+where r is the local (elemental) coordinate system - 1 ~< r ~< 1.
+To solve the Burgers equation, we treat the nonlinear term explicitly (3rd order
+Adams-Bashforth) with a modified collocation scheme, while the viscous term is handled
+implicitly with a variational formulation [9]. The elemental matrices are defined as
+
+Table 1. Abscissaof the first adjacent point to the origin with respect to the cutoff value (-1 ~<x ~< 1)
+N
+
+32
+
+64
+
+128
+
+256
+
+512
+
+xN/2.~
+
+0.0980
+
+0.0491
+
+0.0245
+
+0.0123
+
+0.0061
+
+Burgers e q u a t i o n
+
+2
+
+Ak=--L-k
+
+29
+
+f dhidhJd r
+
+(3.21a)
+
+I dr dr
+
+L k f l hihjdr
+
+(3.21b)
+
+8 ~ = 2 a-,
+
+2
+C k = A~ - ~-~ B k,
+
+(3.21c)
+
+where Ak, B k and C k are essentially the Laplacian, mass matrix and Helmholtz operator,
+respectively. We denote direct stiffness summation [9] as
+
+[C] = Z' ck,
+
+(3.22)
+
+k
+
+where [. ] indicates a global matrix or vector. Periodic boundary conditions are applied
+by identifying the same global node number to the first and last node.
+In terms of these matrices, the explicit step is then
+
+2
+
+aq Z' Z B~
+q=O
+
+(upu~
+
+t'k "j
+
+dhp (rj)
+-~r
+
+(3.23a)
+
+where the aq are the Adams-Bashforth coefficients,
+23
+a0 = ~,
+
+al = -3,4
+
+5
+a2 = ~,
+
+(3.23b)
+
+where the superscript n refers to the time level nAt.
+Note multiplication by the mass matrix B k following collocation and differentation
+recovers certain desirable characteristics of the Galerkin approach, in particular conservation. The viscous step is then constructed from the variational formulation for the
+Helmholtz equation giving
+2
+[C][u "+l + u"] = - - - [B][u" + ~,+,].
+vat
+
+(3.24)
+
+Since it is [B][~ "+l] that is required in (3.24), no (matrix inversion) penalty is associated
+with use of the consistent mass matrix in eqn (3.23a).
+This technique, which has been successfully applied to the Navier-Stokes equations
+[9, 10] is made efficient by use of collocation for the nonlinear terms, and parallel static
+condensation [10] for eqn (3.24). Thus for both efficiency and convenience considerations
+[no patching is required following the variational formulation (3.24)], the method borrows
+from both finite element and spectral practice. Note the technique is not a true Chebyshev
+method, as the unity rather than (1 - z2) -I/2 weighting is used in the elemental matrices.
+Inasmuch, for the elliptic contributions, the scheme reduces to a particular implementation
+of p-type finite element ideas [ 11 ].
+3.3. Finite difference approximation
+Classical centered finite differences are used in conjunction with a coordinate transformation which accumulates points in the large gradient region, and places a limited
+number of grid points where the solution does not change rapidly. The coordinate
+transformation is given by the analytical expression
+"x
+
+CAF 14:l-C
+
+= g(D
+
+=
+
+1+
+
+tanh 2S(~"- 1)
+tanh S
+'
+
+tanh 2S~"
+-1 + - tanh S '
+
+0.5 ~< ~'< 1
+0<~'<0.5
+
+(3.25)
+
+C. BASDEVANT et al.
+
+30
+
+where S is a stretching parameter and here is set to 4. In the transformed space, secondorder derivatives are evaluated in the form
+
+02u_ 1 0 {u']
+Ox 2 g, ~-~ \ ~ j .
+
+(3.26)
+
+Time discretization is performed by a linearized noniterative scheme which can produce
+any of the schemes: Euler implicit, Crank-Nicolson and three-point backward. This
+implicit noniterative method is due to Briley and McDonald [12], and full details about
+this finite difference scheme may be found in Orlandi and Briscolini [l 3].
+4. NUMERICAL RESULTS
+This section presents the numerical results generated by the proposed algorithms.
+
+4.1. Fourier method
+An accurate solution was obtained with a Galerkin procedure using 1364 degrees of
+freedom (M = 1024, N = 682) and a time step At = 5.10-4/7r. Figure 1 shows this
+solution at times t = l/a-, 2/~r, 3/~r. The previous numerical solution is considered as the
+"reference" solution for error estimates in Figs. 2 and 3. Typical behaviors of the L2
+error appear on Fig. 2. In Fig. 2(a) we present results for a fine resolution (N = 682)
+which shows clearly a (At) -2 decrease of the error at time t = 1/Tr and 2/7r. For a coarser
+resolution (N = 170) (Fig. 2b) the error is still of second order at time t = 1/7r while at
+time t = 2/7r, the error decays approximately as (At) -~ between At = 5 . 1 0 - 2 / 7 r and At
+= 10-3/~-. For smaller At values, the error remains constant. For very coarse resolutions,
+the results are still worse. The accuracy of the time integration is destroyed by the spatial
+errors. Any time-step reduction does not help to cure the problem.
+Figure 3 presents the L2 error with respect to the number of the Fourier modes in the
+Galerkin schemes. The time step is fixed at At = 10-3/~r. The rate of convergence is
+O(N -4) at least for the finite N used here and for t close to 2/~r. For high N values, the
+error is constant due to the limited precision of the computer used (AP 120, 38 bits
+
+M = 1024
+N=682
+At = 5.10- 4/IT
+
+0.5
+
+0.0
+
+-0.5
+
+a/~_........t
+=
+1/rr
+
+-1.0
+
+-1.5
+-1.0
+
+I
+
+-0.15
+
+0.0
+
+O.J5
+
+x
+
+1.0
+
+Fig. 1. Reference solution of the Fourier method for t = IDr, 2#r, 3/~r with the Galerkin procedure
+(N = 682, At = 5.10-4/~r).
+
+31
+
+Burgers equation
+
+{ e 2 ) 1/2
+
+I
+
+/
+10-2
+
+/
+
+I
+I
+
+X
+
+x
+
+/
+
+10-4
+
+/
+
+/
+
+iX
+X
+
+x
+
+M =1024
+
+/
+/
+
+X
+
+N=682
+
+x
+
+10-6
+t=2/n
+
+tll/n
+
+nat
+
+nat
+
+lO-~
+lO,-'
+1
+I
+1
+10 - 4
+
+10 - 2
+
+lO?~ I lO?'
+I
+10 - 4
+
+10-2
+
+Fig. 2. L2 error with respect to the time step At, at time t = l / r and 21~r. (a). Galerkin method M
+= 1024, N = 682.
+
+words). In pseudo-spectral schemes, aliasing errors are harmless provided the cutoff N is
+larger than 128.
+When the resolution is too low to approximate properly the narrow layer developed
+by the solution, small scales of the numerical solution are unduly excited and therefore,
+energy which would have been dissipated at small scales, accumulates in the high wave
+numbers. To avoid this effect, a modified dissipativity term is added to the right-hand
+side of (3.4), namely
+
+-vak2auk.
+This procedure is well known in two-dimensional turbulence (Basdevant et al. [14]). This
+damping term is local in physical and Fourier space for large fl values (fl = 2 . . . . . 8). It
+will act only on small scales and mainly in the vicinity of the origin. Figure 4 displays
+the effect of this modified dissipativity on a fully aliased collocation method at low
+resolution (N = 64). On this coarse mesh, this extra dissipativity localizes (near the origin)
+and decreases the error.
+4.2. Chebyshev methods
+4.2.1. Methods in spectral space (TAU). Here, because of the oddness of the initial
+condition which is preserved by eqn (2.1), the integration domain is reduced to [0, 1] in
+<e 2> 1/2
+
+I
+I
+I
+
+/
+10-2
+
+/
+
+X
+
+X
+
+/
+/
+
+x
+
+,/
+
+10-4
+
+x
+
+M=256
+
+x× /
+
+N =170
+
+/
+10-6
+
+10-8
+
+t=lln
+
+t 12/n
+
+nat
+
+nat
+
+X
+
+I 1£ -3 , 10-'
+10 - 4
+10-2
+
+I 10-3
+,
+, 1~-1
+10 - 4
+10 -2
+
+Fig. 2(b). Galerkin method M = 256, N = 170.
+
+C. BASDEVANTel al.
+
+32
+(e2> I/2
+10-2
+
+x~ x
+
+N-4
+
+\
+10-4
+
+×\
+x
+
+x
+
+×
+
+x
+
+×
+
+x
+
+x
+
+10-e
+t =l/rr
+
+85
+I
+
+I
+
+170
+
+t=2/n
+
+341
+I
+
+L
+
+682
+
+85
+i
+
+341
+
+I
+
+I
+
+170
+
+t=31w
+
+85
+
+l
+
+I
+
+682
+
+I
+
+170
+
+341
+I
+
+i
+
+N
+
+682
+
+Fig. 3. Lz error with respect to the cutoff N for Galerkin scheme. The time step is fixed at At
+= 10-3/lr.
+
+order to take advantage of the Chebyshev efficiency near the boundaries. At the origin,
+we impose u(0, t) = 0. The solution in the interval [-1, l] with a large gradient at x = 0
+would necessitate a very large number of terms as it will be shown in the next section in
+the case of the ABCN collocation scheme. We include these results to indicate the
+drastically different convergence properties of Chebyshev methods for internal and
+boundary layers.
+The results obtained by the ABCN Tau method and the Rosenbrock algorithm are
+virtually indistinguishable. Figure 5 shows the solution obtained at various times by the
+ABCN scheme with N = 64 and At = 1/300z. In this computation, the accuracy is about
+5- 10 -5. Figures 6, 7 and 8 present the time evolution of three sensitive quantities, namely
+the slope lau/axl at the origin, the maximum velocity uM = maxx lu[ and the abscissa
+Xm~ of uM. The Rosenbrock algorithm needs no stability restriction and the choice of
+time step comes only from accuracy considerations.
+4.2.2. Method in physical space (Collocation). Problem (2.1) is first solved on [ - 1 , 1]
+and Fig. 9 presents plots for different values of N. (On these plots, linear interpolation is
+used between collocation points.) The time step is always At = 10-2/~ ", except for the
+case N = 512 where At = 10-2/2~r to avoid oscillations. It is quite striking to notice that
+a very large number of polynomials is needed to obtain nice and smooth profiles (no
+1.5 u
+
+1.C
+
+0.5
+
+N=M=64
+At =10-2/TT
+t =2/Tr
+
+j
+
+j
+
+0.0
+
+-0.5
+
+-1.0
+
+-1.5
+-1.0
+
+-0.'5
+
+0.0
+
+0)5
+
+x
+
+1.0
+
+Fig. 4. Effect of the modified dissipativities at low resolution for a fully aliased collocation method.
+N = M = 64, t = 2/,r, At = 10-2/,r. (a). Comparison of the collocation solution (solid line) without
+any modelization term with the reference solution (dashed line).
+
+Burgers equation
+1.5 u
+
+33
+N=M=64
+
+At =10-2/n
+t=21n
+
+0.0
+
+-0.5
+
+-1.0
+
+-1"-51.0
+
+t
+
+-0.5
+
+i
+
+0.0
+
+i
+
+0.5
+
+x 1.0
+
+Fig. 4(b). Comparison of the collocation solution with -J'2 [-(c~)/(Ox2)] 2, v2 = 1.6 10-'6, (solid
+line) with the reference solution (dashed line).
+
+filtering is used). This effect comes from the fact that at t = 2/~r, the region of large
+gradient near the origin is very narrow. To get the fight value of this gradient, a sufficient
+number of collocation points is necessary, and from Table l, one can conclude that N
+should be at least equal to 256 to get enough spatial resolution. With the coordinate
+transformation (3.18) and (3.19), results change drastically. Figure 10, obtained with
+Chebyshev interpolation, displays the numerical solution for different N values (v = 1/
+100~r, At = 1/100~') and various a values. On Fig. 1 l, one finds the evolution of the
+variable u in the transformed plane. The dilatation produced by the coordinate transformation gives less steep slopes at the origin, which are well represented by Chebyshev
+approximations with lower cutoff values (N = 64). Table 2 gives the values of [8u/OXlm~
+at the origin with respect to a. We will return to this point later in section 5.
+The collocation scheme was also applied to the interval [0, l]. In this case, plots are
+indiscernible from those obtained with the Chebyshev-Tau schemes.
+
+N=M-64
+
+t-2/n
+
+1.G
+
+0.5
+
+O.C
+
+-O.J
+
+-1.1
+
+-1.5
+
+-1.0
+
+i
+
+-0.5
+
+010
+
+0.5
+
+x
+
+1.0
+
+Fig. 4(c). Comparison of the collocation solution with -v, [-(82)/(0x2)] 4, p4 = 3.3 10-16, (solid
+line) with the reference solution (dashed line).
+
+34
+
+C. BASDEVANTel al.
+
+U
+
+--,0
+
+I
+
+I
+
+I
+
+|
+
+.2
+
+.4
+
+.6
+
+.B
+
+r
+
+t
+
+--,2
+
+--, 4
+
+--,6.
+
+--,8.
+
+-1.0
+0.0
+
+.0
+
+Fig. 5. Solution of the Chebyshev spectral ABCN scheme (N = 64, At = 1/300~r).
+
+4.2.3 Spectral element method. This technique shares the rapid convergence of spectral
+methods for problems with smooth solutions, but has the important advantage of being
+able to distribute points where they are required for a particular problem. Although this
+is of limited use for solutions with singularities, for solutions with nonsingular inner
+layers, this can significantly reduce the number of grid points required. This is demonstrated
+in Table 3, where we have chosen M = 4 elements, [-1, -0.05], [-0.05, 0], [0, 0.05],
+[0.05, 1.0] and N = 16. Due to the point crowding near x = 0, good accuracy is obtained
+with limited spatial resolution. An inevitable by-product of the good interior resolution
+is a small time step; however the inefficiency associated with this can be greatly reduced
+by using subcycling [15], in which several (inexpensive) convective steps are taken for
+each implicit viscous step.
+4.3. Finite difference methods
+Finite difference calculations provide values of the slope at the origin which are close
+to the curve shown on Fig. 6. The finite difference results are in good agreement with
+
+au
+
+I- lx.o
+150
+
+100-
+
+50-
+
+/
+0
+
+I
+
+~
+
+2
+
+I
+
+I
+
+4
+
+I
+
+I
+
+6
+
+I
+
+~
+
+8
+
+I
+
+O
+
+fit
+
+10
+
+Fig. 6. Evolution of the absolute value of the slope at the origin versus time.
+
+Burgers equation
+
+35
+
+Umllx
+
+1.0-
+
+0.5-
+
+l
+
+l
+
+2
+
+0.0
+
+I
+
+4
+
+I
+
+6
+
+I
+
+8
+
+~t
+
+10
+
+Fig. 7. Evolution of Um~ = max lu(x, t)l.
+x
+
+these produced by the ABCN spectral scheme. The time integration used the three-point
+backward discretization. The numerical results are presented in Table 3 and will be
+discussed below.
+5. C O M P A R I S O N
+
+AND CONCLUSIONS
+
+As the computations reported in this paper were performed at different places on
+different computers it is extremely difficult to relate the computing times of the various
+methods. Consequently it is impossible to carry out any precise comparison between
+algorithms as regards efficiency. However, a few comments may be done.
+The ABCN Tau scheme requires the solution of a linear system. Several choices are
+available:
+(i) LU factorization in a preprocessing stage followed by the solution of two triangular
+systems at each time step.
+(ii) Inversion of the matrix at the beginning of the time integration followed by a
+matrix multiplication at each time step. This procedure can be very efficient on a vector
+computer.
+(iii) Decoupling of even and odd modes and solution at each step of two quasitridiagonal systems.
+The collocation ABCN scheme may either use (i) or (ii). The Rosenbrock algorithm is
+more expensive because the matrix buildup has to be performed at each step together
+
+Xmsx
+
+0,5
+
+0.4
+
+0.3"
+
+0.2"
+
+!
+0"11
+
+J
+
+i
+
+t
+
+I
+
+J
+
+0.0
+
+2
+
+4
+
+6
+
+8
+
+10
+
+Fig. 8. Evolution of xm,, the abscissa of Um~.
+
+nt
+
+C. BASDEVANT et al.
+
+36
+
+°5!~ "",\\
+
+t4
+
+=
+
+32
+
+Lt
+
+=
+
+I/I00~
+
+0.0
+
+-0.5
+
+-1.0
+
+-lO
+
+-o15
+
+o.o
+
+0 .=5
+
+x
+
+1.0
+
+Fig. 9. Solution at different times for various values of N (v = 10-2#r - 1 ~ x ~ 1) by the
+Chebyshev collocation ABCN scheme.
+Fig. 9(a).
+1.(~
+
+N = 64
+At
+
+=
+
+1/100~
+
+0.5
+
+0.0
+
+-0.5
+
+'t=0
+--1.(]
+
+-,o
+
+-o75
+
+o~o
+
+i
+
+0.15
+
+x
+
+1.0
+
+Fig. 9(b).
+1.0
+N =
+6t
+
+=
+
+128
+1/100w
+
+0.5
+
+0.0
+
+-0.5
+
+-1.0
+-1.0
+
+- 0~5
+
+0.0
+
+0~5
+
+x
+
+1,0
+
+Fig. 9(c).
+
+with the solution o f the linear system. As for the other Chebyshev techniques, the major
+computational expense for the spectral element method is solution o f the implicit
+equations associated with the diffusion terms. Use o f static condensation allows this
+inversion to be done relatively efficiently, as this procedure reduces all coupling between
+
+Burgers equation
+1.O
+
+37
+
+u
+
+/ f~k!
+oo
+
+/ / j
+
+iiiy
+_,o
+
+N
+
+=
+
+256
+
+\i
+
+l:
+_o.o
+
+o.o
+
+o.o
+
+x
+
+,o
+
+Fig. 9(d).
+1.0
+N = 512
+At
+
+= 1/200~
+
+0.5
+
+0.0
+
+-0.5
+
+-1.0
+
+-1.o
+
+- o.'5
+
+o~o
+
+o15
+
+, ,~
+
+Fig. 9(e).
+elements to elemental boundary points, with the remainder of the elemental calculations
+being performed independently. This procedure is particularly effective on a parallel
+processor, where operation counts commensurate with substructured low-order techniques
+can be obtained [10]. The finite difference method involves the solution of a tridiagonal
+system at each step. Finally, the explicit Fourier method is probably the most efficient
+per time as it involves only FFT's.
+If one treats the full domain [-1, 1], the numerical experiments show that the
+presence of the very sharp sawtooth profile requires many grid points or expansion
+functions. The spectacular rate of convergence of spectral schemes which is of "infinite
+order" [ 1] for infinitely differentiable functions is only obtained, if ever, for N unmoderately
+large. All spectral schemes (Fourier Galerkin, Fourier pseudospectral, ABCN collocation)
+perform poorly for At = 10-2/7r even with large cutoffs (N/M -- 682/1024 or N = 512).
+However, better results are obtained if the time step is reduced to small values like At
+= 5.10-4/7r. Well-chosen coordinate transformations [(3.18) and (3.25)] and elemental
+decomposition alleviate the difficulty and help to recover acceptable accuracy (see ABCN
+collocation with coordinate transformation and FD).
+For half the domain [0, l], the accumulation of Chebyshev points near the origin is
+favorable for the achievable precision. This allows the user to decrease the number of
+grid points to N -- 64. The results obtained on [0, l] are roughly speaking of the same
+order of precision as those coming from the previous methods working on [-1, 1] with
+a coordinate transformation or element method; however, the latter are more flexible.
+From Table 3, we can notice that the FD scheme yields two significant digits for [Ou/
+Oxim=xat the origin, while the ABCN spectral and collocation techniques (ABCN and
+
+C. BASDEVANTet al.
+
+38
+t.S-
+
+U
+N=8
+
+At = lllOOrr
+
+1.0 -
+
+a=1/100
+
+O.S -
+
+0.0-
+
+-0.5 t
+-I.0
+
+- 1.0
+
+-01.5
+
+0'.0
+
+01.5
+
+X
+
+I .I)
+
+Fig. 10. Solution at different times for various values of N by the Chebyshev collocation ABCN
+scheme ( - l ~< x ~< 1) using a mapping x = g(~').
+Fig. lO(a).
+t.0
+
+a=lllO0
+
+O.t;-
+
+0.0-
+
+-0.6 -
+
+-4.0
+
+-I,I
+
+-O~.S
+
+0'.0
+
+O~.S
+
+Fig. 10(b).
+
+N "32
+At-I/lOOn
+a-1125
+
+o.o
+
+-o.I;
+
+- ! ,0
+
+-0', S
+
+0.0
+Fig. 10(¢).
+
+0 .S
+
+X
+
+1.0
+
+Burgers equation
+
+39
+
+N=64
+At=lll00n
+¢=1125
+0 . ~ -
+
+0 . 0 -
+
+- 0 o f; -
+
+jto
+-I .0
+- I .O
+
+-O~.G
+
+on.o
+
+O'.~
+
+X
+
+I .O
+
+Fig. lO(d).
+
+spectral element) produce four significant digits. This last accuracy is also achieved by
+the Fourier-Galerkin scheme with At = 5.10-4/w. The spectral Rosenbrock algorithm
+which is third order in time gives five significant digits with N = 64 and still retains two
+significant digits when N = 32.
+If we inspect now the value of the time when IOu/OXLm~ is attained, the time marching
+schemes with spectral (Fourier or Chebyshev) approximation are within 1% from the
+exact value. In contrast, the finite difference scheme presents a large time lag as the
+maximum value appears at later times than the analytical solution. This is due to lagging
+phase errors which characterize very often the second-order finite difference schemes. Let
+us note that for equivalent spatial approximations (for example, Chebyshev schemes on
+[0, 1]), the higher the accuracy in time, the better the resulting value. As a conclusion,
+with spectral discretization, higher-order time schemes should be used.
+The coordinate transformation (3.18) deserves a comment. The first collocation point
+in the neighborhood of the origin in the physical plane is x "-, + a w / N . From Table 2, an
+optimum grid is obtained for a = ~. At smaller a values, the scheme degrades and the
+placing of grid points closer to the origin does not improve the numerical results. A
+possible explanation comes from the error associated to the matrix computation and its
+inverse. In the matrix elements, a 2 terms appear at the denominator, which might grow
+unduly for small a values. As for the coordinate transformation, the spectral element
+decomposition allows placement of points where they are required, with a corresponding
+
+4.0
+
+N=64
+At -11100n
+¢t=1125
+
+O.i;
+
+D.O
+-O
+
+.B
+
+-
+
+1 .O
+
+- ! ,O
+
+~
+
+-O'.8
+
+O~.O
+
+•
+
+O'.S
+
+~
+
+,
+
+.O
+
+Fig. 11. Solution at different times by the Chebyshev collocation ABCN scheme in the transformed
+plane ~'.
+
+C. BASDEVANTet al.
+
+40
+
+Table 2. Maximum value of the slope at the origin
+and corresponding time value for N = 64, At = I/
+100~r with respect to the parameter a of the coordinate
+transformation (3.18)
+a
+
+lau/axl.,~
+
+otm~
+
+1
+1/10
+1/20
+1/25
+1/40
+1/50
+1/60
+1/100
+
+37.3959
+150.7737
+151.7396
+152.1225
+153.3561
+153.3257
+152.6868
+146.6897
+
+1.54
+1.60
+1.60
+1.60
+1.60
+1.60
+1.59
+1.59
+
+Table 3. Maximum absolute value of the slope at the origin and time t ~ at which this maximum
+value occurs for all the numerical algorithms and for the analytical solution.
+Method
+
+- Fourier Galerkin
+
+3urier P s e u d o s p e c t r a l
+
+Interval
+
+[-i,i]
+
+[-I,i]
+
+I•
+
+max
+
+~'tma x
+
+N/M
+
+At.~
+
+151.942
+
+1.6035
+
+682/1024
+
+5.10 -4
+
+142.665
+
+1.60
+
+682/1024
+
+10 -2
+
+148.975
+
+1.603
+
+170/256
+
+5.10 -4
+
+142.313
+
+1.60
+
+170/256
+
+10 -2
+
+142.606
+
+1.60
+
+256/256
+
+10 -2
+
+144.237
+
+1.60
+
+128/128
+
+10 -2
+
+BCN collocation
+
+[-i,i]
+
+145.877
+
+1.60
+
+512
+
+5.10 -3
+
++coordinate transform.
+
+[-i,i]
+
+152.123
+
+1.60
+
+64
+
+10 -2
+
+)ectral Element
+
+[-i,i]
+
+152.04
+
+1.6033
+
+16 x 4
+
+10-2/6
+
+D
+
+[-i,I]
+
+150.1
+
+1.63
+
+81
+
+10 -2
+
+ABCN spectral
+
+[0,1]
+
+152.05
+
+1.60
+
+64
+
+1/300
+
+Rosenbrock spectral
+
+[0,i]
+
+151.998
+
+1.60
+
+64
+
+10 -2
+
+[0,1]
+
+150.144
+
+1.60
+
+32
+
+10 -2
+
+[0,i]
+
+152.126
+
+1.60
+
+64
+
+10 -2
+
+hebyshev
+
+ABCN c o l l o c a t i o n
+nalytical
+
+152.00516
+
+1.6037
+
+increase in accuracy (see Table 3). Unlike the transformation method, the variations in
+resolution are local, not global, and would appear to be more general for multidimensional
+problems.
+From this investigation, we conclude that spectral methods are not well suited to the
+calculation of thin inner layers. If a sufficient number of modes is used and if a good
+coordinate transformation or domain decomposition is designed, the accuracy in the
+sharp region is quite acceptable. Standard numerical schemes such as finite differences
+resort also to coordinate transformation, but suffer from numerical dispersion. Spectral
+methods are better from this point of view and call for higher-order time marching
+schemes.
+Acknowledgements--The Nice team performed all calculations on the Cray-I computer of Centre de Calcui
+Vectoriel pour la Recherche. Louvain-la-Neuve and M.I.T. acknowledge the support of NATO, Grant No. SA.
+5-2-05 RG (035/84) for international collaboration.
+
+REFERENCES
+1. D. Gottlieb and S. A. Orszag, Numerical Analysis of Spectral Methods. Theory and Applications. SIAM
+Monograph no. 26, SIAM, Philadelphia, U.S.A. (1977).
+
+Burgers equation
+
+41
+
+2. J. D. Cole, On a quasi-linear parabolic equation occurring in aerodynamics. Quart. Appl. Math. 9, 225-236
+(1951).
+3. E. R. Benton and G. N. Platzmann, A table of solutions of one-dimensional Burgers equation. Quart. Appl.
+Math. 29, 195-212 (1972).
+4. M. Deville, P. Haldenwang and G. Labrosse, Comparison of time integration (finite difference and spectral)
+for the nonlinear Burgers equation. Notes on Numerical Fluid Mechanics (Edited by H. Viviand), Vol. 5,
+pp. 64-76. Vieweg Verlag, Braunschweig (1982).
+5. J. Viiladsen and M. L. Michelsen, Solution of Differential Equation Models by Polynomial Approximation.
+Prentice-Hall, Englewood Cliffs, New Jersey (1978).
+6. C. Lanczos, Applied Analysis. Prentice-Hall, Englewood Cliffs, New Jersey (1956).
+7. B. A. Finlayson, The Method of Weighted Residuals and Variational Principles. Academic Press, New York
+(1972).
+8. J. Ouazzani and R. Peyret, A pseudo-spectral solution of binary gas mixture flows. Notes on Numerical
+Fluid Mechanics (Edited by Pandolfi/Piva), Vol. 7, pp. 275-282. Vieweg Verlag, Braunschweig (1984).
+9. A. T. Patera, A spectral element method for fluid dynamics: Laminar flow in a channel expansion. J.
+Comput. Phys. 54, 468-488 (1984).
+10. K.Z. Korczak and A. T. Patera, A spectral element method applied to unsteady flows at moderate Reynolds
+number. Proc. 9th Int. Conf. on Num. Meth. Fluid Dyn., Paris, France, Springer, New York (1984).
+I I. I. Babuska and M. R. Dorr, Error estimates for the combined h and p versions of the finite element method.
+Numer. Math. 37, 257-277 (198 l).
+12. W. R. Briley and H. McDonald, Solution of three-dimensional compressible Navier-Stokes equations by an
+implicit technique. Proceed. 4th Internat. Conf. Numer. Meth. Fluid Dynamics, Boulder, CO, Springer, New
+York (1975).
+13. P. Orlandi and M. Briscolini, Direct simulation of burgulence. Proceed. 1983 lnternat. Conf. on Computational
+Techniques and Applications (Edited by J. Noye), North-Holland, Amsterdam (1984).
+14. C. Basdevant, B. Legras, R. Sadourny, and M. Beland, A study of barotropic model flows; lntermittency,
+waves and predictability. J. Atmos. Sci. 38, 2305-2326 0981).
+15. P. M. Gresho, S. T. Chan, R. L. Lee, and C. D. Upson, A modified Finite Element Method for solving the
+time-dependent, incompressible Navier-Stokes equations. Part l: Theory. Int. J. for Num. Meth. in Fluids
+4, 557-597 (1984).
+
+

@@ -1,0 +1,188 @@
+# Created by Octave 8.4.0, Sun Mar 08 19:38:45 2026 CDT <atharva@atharva-Zenbook>
+# name: all_results
+# type: cell
+# rows: 4
+# columns: 1
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 5
+# name: N
+# type: matrix
+# rows: 1
+# columns: 7
+ 32 64 128 256 512 1024 2048
+
+
+# name: nsteps
+# type: matrix
+# rows: 1
+# columns: 7
+ 640 1280 2560 5120 10240 20480 40960
+
+
+# name: s_star
+# type: matrix
+# rows: 1
+# columns: 7
+ 33.377799505574984 37.507102830185715 61.989633624067231 111.41619731665303 139.31515555046005 148.62069435163735 151.14467258174284
+
+
+# name: err
+# type: matrix
+# rows: 1
+# columns: 7
+ 0.78041666805538057 0.75325112101335434 0.59218730716728796 0.26702358448454622 0.08348403731518024 0.022265465516845846 0.0056609092629299603
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 32
+Uniform spacing, convective form
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 5
+# name: N
+# type: matrix
+# rows: 1
+# columns: 7
+ 32 64 128 256 512 1024 2048
+
+
+# name: nsteps
+# type: matrix
+# rows: 1
+# columns: 7
+ 640 1280 2560 5120 10240 20480 40960
+
+
+# name: s_star
+# type: matrix
+# rows: 1
+# columns: 7
+ 107.76518231402221 148.28234706444672 151.79095166300161 151.99785185071678 152.00622084286442 152.00560871468724 152.00528420524975
+
+
+# name: err
+# type: matrix
+# rows: 1
+# columns: 7
+ 0.29104260464564347 0.024491358948296654 0.0014092175357624851 4.8078297363093184e-05 6.9789924528430355e-06 2.9519700992522213e-06 8.1711206225922967e-07
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 34
+Chebyshev spacing, convective form
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 5
+# name: N
+# type: matrix
+# rows: 1
+# columns: 7
+ 32 64 128 256 512 1024 2048
+
+
+# name: nsteps
+# type: matrix
+# rows: 1
+# columns: 7
+ 640 1280 2560 5120 10240 20480 40960
+
+
+# name: s_star
+# type: matrix
+# rows: 1
+# columns: 7
+ 15.914817158580897 31.169882253211068 63.502781075539033 104.94792285791716 134.7684308400043 147.07301439868806 150.72426341294124
+
+
+# name: err
+# type: matrix
+# rows: 1
+# columns: 7
+ 0.89530080979763527 0.79494194635753768 0.58223272765517275 0.30957657715095216 0.11339568446226228 0.032447224826525171 0.0084266651675426584
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 34
+Uniform spacing, conservation form
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 5
+# name: N
+# type: matrix
+# rows: 1
+# columns: 7
+ 32 64 128 256 512 1024 2048
+
+
+# name: nsteps
+# type: matrix
+# rows: 1
+# columns: 7
+ 640 1280 2560 5120 10240 20480 40960
+
+
+# name: s_star
+# type: matrix
+# rows: 1
+# columns: 7
+ 94.4852674891264 144.33522112117888 151.49721551870996 151.97762495009204 152.00453748339979 152.00539781923035 152.00524467156106
+
+
+# name: err
+# type: matrix
+# rows: 1
+# columns: 7
+ 0.37840749952747388 0.050458411272493078 0.0033416265690587406 0.00018114549471842691 4.0953649218389445e-06 1.5645470875055269e-06 5.570308341451812e-07
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 36
+Chebyshev spacing, conservation form
+
+
+
+
+
+
+
+# name: N_vals
+# type: matrix
+# rows: 1
+# columns: 7
+ 32 64 128 256 512 1024 2048
+
+
+# name: s_analytical
+# type: scalar
+152.00515999999999
+
+
