@@ -1,3 +1,0 @@
-Grid	dt	nsteps	s_star	t_star	rel_err_ref	dt_half	rel_change_dt_half
-Uniform	0.000500	4000	95.19834665	0.50550000	3.737e-01	0.000250	1.281e-06
-Chebyshev	0.000500	4000	151.97706223	0.51050000	1.848e-04	0.000250	2.136e-06
