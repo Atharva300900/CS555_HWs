@@ -39,11 +39,11 @@ ue, ve = exact_solution(X, Y, T, nu)
 
 ## Experiments
 
-### Convergence Study
+### Spatial Convergence Study
 
 ```python
 for N in [20, 40, 80]:
-    solve(N, nu, T, dt=1e-4)
+    solve(N, nu, T, dt=1e-5)
 ```
 
 ### Stability Analysis
