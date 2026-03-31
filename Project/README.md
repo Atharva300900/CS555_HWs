@@ -53,7 +53,7 @@ probe_explicit_stability(N, nu, T, method='euler')
 probe_explicit_stability(N, nu, T, method='rk4')
 ```
 
-### Method Comparison
+### Time Integration Method Comparison
 
 ```python
 solve(N, nu, T, dt, method='euler')
