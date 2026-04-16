@@ -1,0 +1,36 @@
+CS555 HW4 Results Summary
+=========================
+
+Q1(a): Uniform mesh, E = 100
+  Max pointwise relative error: 6.734774e-01
+  Max absolute error:           6.667121e-01
+
+Q1(b): Geometric mesh, E = 20, s = 0.70
+  Max pointwise relative error: 1.197238e-02
+  Max absolute error:           1.057567e-02
+
+Q1(c): Optimal s for E = 20
+  Search:                       s in [0.50, 1.05] with ds = 0.005
+  Optimization metric:          max pointwise relative error
+  Best s:                       0.648
+  Max pointwise relative error: 8.708860e-03
+  Max absolute error:           8.383536e-03
+
+Q2(a): Dirichlet BCs, t = 1.50
+  min(u) = -1.000000e+00,  max(u) = +1.649841e+00,  u(1) = +0.000000e+00
+
+Q2(b): Neumann at x=L, t = 1.50
+  min(u) = -1.000000e+00,  max(u) = +9.901165e-01,  u(1) = +9.901165e-01
+
+Discussion for Q2(a)
+  The Dirichlet outflow case shows strong nonphysical oscillations near x = 1.
+  In the last 20 intervals, the slope changes sign 13 times, and the solution overshoots to 1.649841e+00 before dropping to u(1,t) = 0.
+  This is consistent with the expected behavior of unstabilized linear FEM in an advection-dominated regime: h = 0.0100 gives cell Peclet number Pe_h = c h / (2 nu) = 5.00 > 1.
+
+Discussion for Q2(b)
+  Replacing the right Dirichlet condition with the natural Neumann condition du/dx(1,t) = 0 removes the forced outflow value.
+  The final profile is much smoother and nearly monotone near the outflow, with 0 slope reversals in the last 20 intervals and u(1,t) = 9.901165e-01.
+
+Difference between Q2(a) and Q2(b)
+  Part (a) forces the advected solution to match u(1,t) = 0 at the outflow, which creates the large overshoot / undershoot pattern seen in the plot.
+  Part (b) behaves like a more natural outflow boundary, so the large oscillations are greatly reduced and the curve stays bounded near x = 1.

@@ -45,7 +45,7 @@ function hw3()
 
   % --- Q1(c): find optimal s for E = 20 ---
   E = 20;
-  s_vals = 0.50:0.005:1.05;
+  s_vals = 0.20:0.001:1.05;
   abs_vs_s = zeros(size(s_vals));
   rel_vs_s = zeros(size(s_vals));
   for k = 1:length(s_vals)
